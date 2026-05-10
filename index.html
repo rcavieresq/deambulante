@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deambulante | El Loco Editorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        /* ESTÉTICA MINIMALISTA DE ARCHIVO - PROYECTO ROBERTO */
+        body {
+            background-color: #f4f4f2;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #1a1a1a;
+        }
+
+        header { 
+            margin: 20px 0; 
+            text-align: center; 
+            width: 95%; 
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 { font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; font-size: 2rem; margin: 0; }
+
+        .info-btn {
+            background: none;
+            border: 1px solid #1a1a1a;
+            padding: 5px 15px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .info-btn:hover { background-color: #1a1a1a; color: #f4f4f2; }
+
+        .portfolio-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            max-width: 1200px;
+            width: 95%;
+        }
+
+        .media-box {
+            position: relative;
+            flex: 2;
+            aspect-ratio: 4 / 3;
+            background-color: #ddd;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            cursor: zoom-in;
+        }
+
+        .media-box img, .media-box video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .video-active video { opacity: 1; z-index: 2; }
+        .video-active img { opacity: 0; z-index: 1; }
+        .image-active video { opacity: 0; z-index: 1; }
+        .image-active img { opacity: 1; z-index: 2; }
+
+        .text-box {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #d1d1d1;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .text-box p { font-size: 1.1rem; line-height: 1.5; font-style: italic; margin-bottom: 15px; color: #333; }
+        
+        .location-info {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #888;
+        }
+
+        #locationLink {
+            color: #888;
+            text-decoration: none;
+            border-bottom: 1px solid #ccc;
+            transition: color 0.3s;
+            display: block; /* Para que ocupe su propia línea */
+            margin: 5px 0;
+        }
+
+        #locationLink:hover { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+
+        #timelabel { font-size: 0.7rem; color: #bbb; display: block; margin-top: 5px; }
+
+        .controls { display: flex; gap: 20px; margin-top: 20px; }
+        .nav-btn {
+            background: none;
+            border: 1px solid #d1d1d1;
+            font-size: 1.5rem;
+            color: #1a1a1a;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover { background-color: #1a1a1a; color: #fff; }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .lightbox-content {
+            max-width: 600px;
+            width: 85%;
+            background-color: #f4f4f2;
+            padding: 40px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .lightbox-content h2 { font-weight: 300; text-transform: uppercase; letter-spacing: 0.2em; border-bottom: 1px solid #ddd; padding-bottom: 15px; }
+        .lightbox-content p { line-height: 1.8; font-size: 0.9rem; color: #444; text-align: justify; }
+        
+        .close-txt { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 0.8rem; letter-spacing: 0.1em; border-bottom: 1px solid #1a1a1a; }
+
+        #lightboxImg { max-width: 90%; max-height: 90%; border: 2px solid #fff; cursor: zoom-out; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; }
+            .portfolio-container { flex-direction: column; gap: 10px; }
+            .media-box { width: 100%; flex: none; }
+            .text-box { border-left: none; border-top: 1px solid #d1d1d1; text-align: center; padding-top: 20px; width: 100%; }
+            .controls { justify-content: center; width: 100%; }
+        }
+
+        footer { margin: 40px 0 20px; font-size: 0.7rem; color: #aaa; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="width: 80px;"></div> 
+        <h1>Deambulante</h1>
+        <button class="info-btn" onclick="openTextLightbox()">PROYECTO</button>
+    </header>
+
+    <div class="portfolio-container" id="mainContainer">
+        <div class="media-box image-active" id="mediaBox" onclick="openLightbox()">
+            <img src="" alt="Retrato" id="mainImg">
+            <video id="mainVid" muted playsinline>
+                <source src="" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="text-box">
+            <p id="caption">Cargando...</p>
+            <span class="location-info">
+                <span id="subjectLabel"></span>
+                <a id="locationLink" href="#" target="_blank"></a>
+                <span id="timelabel"></span>
+            </span>
+            
+            <div class="controls">
+                <button class="nav-btn" onclick="prevSlide()">⟨</button>
+                <button class="nav-btn" onclick="nextSlide()">⟩</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img src="" id="lightboxImg">
+    </div>
+
+    <div id="textLightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="close-txt" onclick="closeTextLightbox()">CERRAR</span>
+            <h2>Deambulante</h2>
+            <p>
+                <strong>Deambulante</strong> es una serie de retratos documentales que explora la intersección entre el oficio callejero y la búsqueda personal por gestionar la ansiedad producida por las interacciones sociales. El proyecto nace de la premisa de descifrar un orden en la calle que, por momentos, suele parecer azaroso, para terminar comprendiendo que orden y caos coexisten para aquellos dispuestos a mirar y entender los motivos de los retratados.
+                <br><br>
+                Situada entre las cuadras de <strong>Santiago Centro</strong>, la muestra nivela distintas expresiones del trabajo, disolviendo la frontera entre lo regulado y lo fortuito. Nos recuerda que el acto de habitar la calle con honestidad es, en esencia, un acto de confianza o, como la mayoría de los protagonistas mencionó, un acto de <strong>fe</strong>.
+                <br><br>
+                A través del uso de Inteligencia Artificial para reanimar los momentos previos al "clic", la muestra revela el <em>espacio latente</em> de la calle: la ansiedad del encuentro, el ajuste del cuerpo y la vulnerabilidad del sujeto frente al lente. Cada pieza funciona como un díptico temporal entre el proceso y el pacto de confianza.
+            </p>
+        </div>
+    </div>
+
+    <footer>© 2026 ROBERTO CAVIERES</footer>
+
+    <script>
+        const retratos = [
+            { 
+                img: "/img/Retrato_01.jpg", 
+                vid: "/img/Video_01.mp4", 
+                frase: "Me siento agradecido y feliz que mi familia me vea bien.", 
+                sujeto: "Vendedor de bolsos", 
+                loc: "Agustinas", 
+                mapa: "https://goo.gl/maps/xyz1",
+                tiempo: "27-04-2026 13:34:41.680" 
+            },
+            { 
+                img: "/img/Retrato_02.jpg", 
+                vid: "/img/Video_02.mp4", 
+                frase: "Si te dicen que no, vas con el siguiente y no te haces problemas.", 
+                sujeto: "Promotores de Óptica", 
+                loc: "Huerfanos con San Antonio", 
+                mapa: "https://goo.gl/maps/xyz2",
+                tiempo: "05-05-2026 12:50:06.980"  
+            },
+            { 
+                img: "/img/Retrato_03.jpg", 
+                vid: "/img/Video_03.mp4", 
+                frase: "Me preocupan los días que hay marcha, ahí no puedo quedarme a vender.", 
+                sujeto: "Vendedora de Frutos Secos", 
+                loc: "Bandera con Alameda", 
+                mapa: "https://goo.gl/maps/xyz3",
+                tiempo: "05-05-2026 16:06:50.620" 
+            },
+            { 
+                img: "/img/Retrato_04.jpg", 
+                vid: "/img/Video_04.mp4", 
+                frase: "Si tenía que salir a vender, mejor hacer algo que me gusta que es crear con las manos.", 
+                sujeto: "Artesano de Madera", 
+                loc: "Barrio Nueva York", 
+                mapa: "https://goo.gl/maps/xyz4",
+                tiempo: "27-04-2026 15:48:44.640"
+            },
+            { 
+                img: "/img/Retrato_05.jpg", 
+                vid: "/img/Video_05.mp4", 
+                frase: "Se siente la lejanía, pero gracias a Dios tengo trabajo y puedo enviar dinero a mi familia.", 
+                sujeto: "Promotora de Manicure", 
+                loc: "Estado con Merced", 
+                mapa: "https://goo.gl/maps/xyz5",
+                tiempo: "05-05-2026 12:59:18.810" 
+            },
+            { 
+                img: "/img/Retrato_06.jpg", 
+                vid: "/img/Video_06.mp4", 
+                frase: "Me encanta mi trabajo, salir a la calle y ver a la gente.", 
+                sujeto: "Recolector Municipal", 
+                loc: "Plaza de armas", 
+                mapa: "https://goo.gl/maps/xyz6",
+                tiempo: "30-04-2026 15:46:43.470" 
+            }
+        ];
+
+        // LÓGICA DE INICIO ALEATORIO
+        let currentIndex = Math.floor(Math.random() * retratos.length);
+        
+        let transitionTimer;
+        let isFirstCycle = true;
+
+        const mainImg = document.getElementById('mainImg');
+        const mainVid = document.getElementById('mainVid');
+        const vidSource = mainVid.querySelector('source');
+        const caption = document.getElementById('caption');
+        const subjectLabel = document.getElementById('subjectLabel');
+        const locationLink = document.getElementById('locationLink');
+        const timelabel = document.getElementById('timelabel');
+        const mediaBox = document.getElementById('mediaBox');
+        const lightbox = document.getElementById('lightbox');
+        const textLightbox = document.getElementById('textLightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+
+        function updateSlide() {
+            clearTimeout(transitionTimer);
+            isFirstCycle = true;
+            mainVid.pause();
+            mainVid.currentTime = 0;
+            mediaBox.classList.replace('video-active', 'image-active');
+
+            const r = retratos[currentIndex];
+            mainImg.src = r.img;
+            vidSource.src = r.vid;
+            mainVid.load();
+            
+            caption.innerText = `"${r.frase}"`;
+            subjectLabel.innerText = r.sujeto;
+            locationLink.innerText = r.loc;
+            locationLink.href = r.mapa;
+            timelabel.innerText = r.tiempo;
+            startCycle(3000);
+        }
+
+        function startCycle(delay) {
+            transitionTimer = setTimeout(() => {
+                mediaBox.classList.replace('image-active', 'video-active');
+                mainVid.play();
+            }, delay);
+        }
+
+        mainVid.onended = () => {
+            mediaBox.classList.replace('video-active', 'image-active');
+            isFirstCycle = false;
+            startCycle(5000);
+        };
+
+        function openLightbox() {
+            lightboxImg.src = retratos[currentIndex].img;
+            lightbox.style.display = 'flex';
+        }
+
+        function closeLightbox() { lightbox.style.display = 'none'; }
+        function openTextLightbox() { textLightbox.style.display = 'flex'; }
+        function closeTextLightbox() { textLightbox.style.display = 'none'; }
+        function nextSlide() { currentIndex = (currentIndex + 1) % retratos.length; updateSlide(); }
+        function prevSlide() { currentIndex = (currentIndex - 1 + retratos.length) % retratos.length; updateSlide(); }
+
+        window.onload = updateSlide;
+    </script>
+</body>
+</html>
